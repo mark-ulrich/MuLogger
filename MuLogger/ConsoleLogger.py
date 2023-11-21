@@ -4,29 +4,29 @@ Console MuLogger functions
 
 # TODO: Buffer log messages and write them to file in a separate thread
 
-LOG_LEVEL_INFO = 0x00
-LOG_LEVEL_VERBOSE = 0x01
-LOG_LEVEL_WARNING = 0x02
-LOG_LEVEL_ERROR = 0x03
-LOG_LEVEL_FATAL = 0x04
-LOG_LEVEL_DEBUG = 0x05
+LOG_LEVEL_DEBUG = 0x00
+LOG_LEVEL_INFO = 0x01
+LOG_LEVEL_VERBOSE = 0x02
+LOG_LEVEL_WARNING = 0x03
+LOG_LEVEL_ERROR = 0x04
+LOG_LEVEL_FATAL = 0x05
 
 COLOR_CODES = {
+    LOG_LEVEL_DEBUG: "\033[93m",
     LOG_LEVEL_INFO: "\033[92m",
     LOG_LEVEL_VERBOSE: "\033[93m",
     LOG_LEVEL_WARNING: "\033[93m",
     LOG_LEVEL_ERROR: "\033[91m",
     LOG_LEVEL_FATAL: "\033[91m",
-    LOG_LEVEL_DEBUG: "\033[93m",
 }
 
 PREFIXES = {
+    LOG_LEVEL_DEBUG: "[D]",
     LOG_LEVEL_INFO: "[+]",
     LOG_LEVEL_VERBOSE: "[+]",
     LOG_LEVEL_WARNING: "[!]",
     LOG_LEVEL_ERROR: "[!]",
     LOG_LEVEL_FATAL: "[!]",
-    LOG_LEVEL_DEBUG: "[D]",
 }
 
 # TODO: Find a better way than just exposing this to the importing module
@@ -57,7 +57,7 @@ def set_log_level(level: int) -> None:
 def log(level: int, msg: str) -> None:
     """Log message"""
     global log_level
-    if level > log_level:
+    if level < log_level:
         return
     if log_to_file:
         with open(log_file, "a") as f:
