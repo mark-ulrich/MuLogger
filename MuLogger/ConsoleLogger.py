@@ -40,8 +40,10 @@ log_use_colors: bool = True
 # TODO: DRY this code up
 
 
-def generate_log_str(msg: str, level: int, use_colors: bool = False) -> str:
+def generate_log_str(msg: any, level: int, use_colors: bool = False) -> str:
     """Generate log string"""
+    if not isinstance(msg, str):
+        msg = str(msg)
     log_str = f"{PREFIXES[level]} {msg}"
     if use_colors:
         log_str = f"\033{COLOR_CODES[level]}{log_str}\033[0m"
@@ -54,7 +56,7 @@ def set_log_level(level: int) -> None:
     log_level = level
 
 
-def log(level: int, msg: str) -> None:
+def log(level: int, msg: any) -> None:
     """Log message"""
     global log_level
     if level < log_level:
@@ -66,32 +68,32 @@ def log(level: int, msg: str) -> None:
         print(generate_log_str(msg, level, log_use_colors))
 
 
-def log_info(msg: str) -> None:
+def log_info(msg: any) -> None:
     """Log info message"""
     log(LOG_LEVEL_INFO, msg)
 
 
-def log_warning(msg: str) -> None:
+def log_warning(msg: any) -> None:
     """Log warning message"""
     log(LOG_LEVEL_WARNING, msg)
 
 
-def log_error(msg: str) -> None:
+def log_error(msg: any) -> None:
     """Log error message"""
     log(LOG_LEVEL_ERROR, msg)
 
 
-def log_fatal(msg: str) -> None:
+def log_fatal(msg: any) -> None:
     """Log fatal message"""
     log(LOG_LEVEL_FATAL, msg)
     # sys.exit()
 
 
-def log_debug(msg: str) -> None:
+def log_debug(msg: any) -> None:
     """Log debug message"""
     log(LOG_LEVEL_DEBUG, msg)
 
 
-def log_verbose(msg: str) -> None:
+def log_verbose(msg: any) -> None:
     """Log verbose message"""
     log(LOG_LEVEL_VERBOSE, msg)
