@@ -64,12 +64,12 @@ def close() -> None:
         log_file.close()
 
 
-def generate_log_str(msg: any, level: int) -> str:
+def generate_log_str(msg: any, level: int, use_color: bool) -> str:
     """Generate log string"""
     if not isinstance(msg, str):
         msg = str(msg)
     log_str = f"{PREFIXES[level]} {msg}"
-    if config["log_use_colors"]:
+    if use_color:
         log_str = f"\033{COLOR_CODES[level]}{log_str}\033[0m"
     return log_str
 
@@ -88,8 +88,8 @@ def log(level: int, msg: any) -> None:
     if config["log_to_file"]:
         if not log_file or not isinstance(log_file, TextIOWrapper):
             raise Exception("Log file not initialized")
-        log_file.write(generate_log_str(msg, level) + "\n")
-    print(generate_log_str(msg, level))
+        log_file.write(generate_log_str(msg, level, use_color=False) + "\n")
+    print(generate_log_str(msg, level, config["log_use_colors"]))
 
 
 def log_info(msg: any) -> None:
