@@ -1,6 +1,7 @@
 """
 Console MuLogger functions
 """
+from io import TextIOWrapper
 
 # TODO: Buffer log messages and write them to file in a separate thread
 
@@ -29,15 +30,36 @@ PREFIXES = {
     LOG_LEVEL_FATAL: "[!]",
 }
 
-# TODO: Find a better way than just exposing this to the importing module
-log_to_file: bool = False
+config = {
+    "log_to_file": False,
+    "log_file_path": "log.txt",
+    "log_level": LOG_LEVEL_INFO,
+    "log_use_colors": True,
+}
 
-log_file: str = "log.txt"
-log_level: int = LOG_LEVEL_INFO
-log_use_colors: bool = True
+log_file: (TextIOWrapper, None) = None
 
 
-# TODO: DRY this code up
+def initialize(
+    log_level: int = LOG_LEVEL_INFO,
+    log_to_file: bool = False,
+    log_file_path: str = "log.txt",
+) -> None:
+    """Initialize the logger"""
+    global config
+    config["log_level"] = log_level
+    config["log_to_file"] = log_to_file
+    config["log_file_path"] = log_file_path
+    if log_to_file:
+        global log_file
+        log_file = open(log_file_path, "w")
+
+
+def close() -> None:
+    """Close the logger"""
+    global log_file
+    if log_file and isinstance(log_file, TextIOWrapper) and not log_file.closed:
+        log_file.close()
 
 
 def generate_log_str(msg: any, level: int, use_colors: bool = False) -> str:
@@ -52,19 +74,20 @@ def generate_log_str(msg: any, level: int, use_colors: bool = False) -> str:
 
 def set_log_level(level: int) -> None:
     """Set log level"""
-    global log_level
-    log_level = level
+    global config
+    config["log_level"] = level
 
 
 def log(level: int, msg: any) -> None:
     """Log message"""
-    global log_level
-    if level < log_level:
+    global config
+    if level < config["log_level"]:
         return
-    if log_to_file:
-        with open(log_file, "a") as f:
-            f.write(generate_log_str(msg, level, False) + "\n")
-    print(generate_log_str(msg, level, log_use_colors))
+    if config["log_to_file"]:
+        if not log_file or not isinstance(log_file, TextIOWrapper):
+            raise Exception("Log file not initialized")
+        log_file.write(generate_log_str(msg, level, False) + "\n")
+    print(generate_log_str(msg, level, config["log_use_colors"]))
 
 
 def log_info(msg: any) -> None:
