@@ -63,9 +63,8 @@ def log(level: int, msg: any) -> None:
         return
     if log_to_file:
         with open(log_file, "a") as f:
-            f.write(generate_log_str(msg, LOG_LEVEL_INFO))
-    else:
-        print(generate_log_str(msg, level, log_use_colors))
+            f.write(generate_log_str(msg, level, False) + "\n")
+    print(generate_log_str(msg, level, log_use_colors))
 
 
 def log_info(msg: any) -> None:
