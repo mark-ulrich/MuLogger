@@ -44,12 +44,14 @@ def initialize(
     log_level: int = LOG_LEVEL_INFO,
     log_to_file: bool = False,
     log_file_path: str = "log.txt",
+    color: bool = False,
 ) -> None:
     """Initialize the logger"""
     global config
     config["log_level"] = log_level
     config["log_to_file"] = log_to_file
     config["log_file_path"] = log_file_path
+    config["log_use_colors"] = color
     if log_to_file:
         global log_file
         log_file = open(log_file_path, "w")
@@ -62,12 +64,12 @@ def close() -> None:
         log_file.close()
 
 
-def generate_log_str(msg: any, level: int, use_colors: bool = False) -> str:
+def generate_log_str(msg: any, level: int) -> str:
     """Generate log string"""
     if not isinstance(msg, str):
         msg = str(msg)
     log_str = f"{PREFIXES[level]} {msg}"
-    if use_colors:
+    if config["log_use_colors"]:
         log_str = f"\033{COLOR_CODES[level]}{log_str}\033[0m"
     return log_str
 
@@ -86,8 +88,8 @@ def log(level: int, msg: any) -> None:
     if config["log_to_file"]:
         if not log_file or not isinstance(log_file, TextIOWrapper):
             raise Exception("Log file not initialized")
-        log_file.write(generate_log_str(msg, level, False) + "\n")
-    print(generate_log_str(msg, level, config["log_use_colors"]))
+        log_file.write(generate_log_str(msg, level) + "\n")
+    print(generate_log_str(msg, level))
 
 
 def log_info(msg: any) -> None:
