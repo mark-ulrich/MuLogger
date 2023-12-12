@@ -121,3 +121,4 @@ def log_debug(msg: any) -> None:
 def log_verbose(msg: any) -> None:
     """Log verbose message"""
     log(LOG_LEVEL_VERBOSE, msg)
+
